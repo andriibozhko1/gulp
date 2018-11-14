@@ -8,9 +8,10 @@ const sass = require('gulp-sass');
 
 const distDirectory = 'dist';
 const htmlBlob = 'src/*.html';
-const imagesBlob = 'src/images/**';
-const stylesBlob = 'src/css/**';
-const sassBlob = 'src/sass/**';
+const imagesBlob = 'src/img/**';
+const stylesBlob = 'src/scss/**';
+const sassBlob = 'src/scss/**';
+const jsBlob = 'src/js/**';
 
 gulp.task('default', function () {
   return runSequence('build', 'serve');
@@ -19,7 +20,7 @@ gulp.task('default', function () {
 gulp.task('build', function () {
   return runSequence(
     'cleanDist',
-    ['processStyles', 'processHtml', 'processImages','sass']
+    ['processStyles', 'processHtml', 'processImages','sass','js']
   );
 });
 
@@ -42,6 +43,9 @@ gulp.task('serve', function () {
    gulp.watch(sassBlob, function () {
     return runSequence('sass', 'reloadBrowser');
   });
+   gulp.watch(jsBlob, function () {
+    return runSequence('js', 'reloadBrowser');
+  });
 });
 
 gulp.task('cleanDist', function () {
@@ -55,7 +59,7 @@ gulp.task('processHtml', function () {
 
 gulp.task('processImages', function () {
   return gulp.src(imagesBlob)
-    .pipe(gulp.dest(`${distDirectory}/images/`));
+    .pipe(gulp.dest(`${distDirectory}/img/`));
 });
 
 gulp.task('processFonts', function () {
@@ -69,7 +73,7 @@ gulp.task('processStyles', function () {
     .pipe(autoprefixer({
       browsers: ['last 2 versions']
     }))
-    .pipe(gulp.dest(`${distDirectory}/css`));
+    .pipe(gulp.dest(`${distDirectory}/css/`));
 });
 
 gulp.task('reloadBrowser', function (done) {
@@ -77,7 +81,11 @@ gulp.task('reloadBrowser', function (done) {
   done();
 });
 gulp.task('sass', function() {
-  return  gulp.src('src/sass/main.sass')
+  return  gulp.src('src/scss/main.scss')
     .pipe(sass())
     .pipe(gulp.dest('dist/css/'))
+});
+gulp.task('js', function() {
+  return gulp.src(jsBlob)
+  .pipe(gulp.dest(`${distDirectory}/js/`));
 });
